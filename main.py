@@ -222,7 +222,7 @@ def main():
             result = login_user(username, check_hashes(password, hashed_pswd))
             if result:
                 st.success("Logged In as {}".format(username))
-                task = st.selectbox("Task", ["Show Customer Profiles", "Show Terminal Profiles", "Show Transactions", "Make Transaction and Predict", "Blacklist Terminals"])
+                task = st.selectbox("Task", ["Show Customer Profiles", "Show Terminal Profiles", "Show Transactions", "Make Transaction and Predict", "Blacklist Terminals", "Velocity Checks"])
 
                 if task == "Show Customer Profiles":
                     st.subheader("Customer Profiles")
@@ -258,8 +258,18 @@ def main():
                         customer_id = customer_transaction.loc[0, 'CUSTOMER_ID']
                         terminal_id = customer_transaction.loc[0, 'TERMINAL_ID']
                         blacklist = eval(customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'].iloc[0])
+                        frequency = customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'FREQUENCY'].iloc[0]
+                        data = pd.read_csv("transactions.csv")
+                        df = data[data.CUSTOMER_ID == customer_id]
+                        pd.options.mode.chained_assignment = None
+                        df['TX_DATETIME'] = pd.to_datetime(df['TX_DATETIME'])
+                        dat = str(customer_transaction.at[0, 'TX_DATETIME'].date())
+                        count = len(df[df['TX_DATETIME'].dt.date == pd.to_datetime(dat).date()])
                         if terminal_id in blacklist:
-                            st.warning("Terminal blacklisted, no transaction can be made")
+                            st.warning("Terminal {} blacklisted, no transaction can be made")
+
+                        elif count == frequency:
+                            st.warning("Threshold frequency of {} has been reached for customer {} for {}, so no transaction can be made".format(frequency, customer_id, dat))
 
                         else:
                             customer_transaction['TX_FRAUD_SCENARIO'] = 0
@@ -304,7 +314,6 @@ def main():
 
                             customer_transaction['TX_FRAUD'] = int(prediction[0])
                             st.dataframe(customer_transaction)
-                            data = pd.read_csv("transactions.csv")
                             new_transaction_df = pd.concat([data, customer_transaction], axis=0, join='inner')
                             new_transaction_df.to_csv('transactions.csv', index=False)
 
@@ -321,6 +330,18 @@ def main():
                         customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'] = customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'].apply(lambda x: blacklist_row)
                         customer_df.to_csv('customerProfiles.csv', index=False)
                         st.write("Terminal {} is blacklisted for customer {}".format(terminal_id, customer_id))
+
+                elif task == "Velocity Checks":
+                    st.subheader("Velocity Checks")
+                    customer_id = st.number_input("Customer ID", value=None, step=1, min_value=0, max_value=4999)
+                    frequency = st.number_input("Threshold Frequency", value=None, step=1, min_value=0)
+                    submit = st.button("Submit")
+
+                    if submit:
+                        customer_df = pd.read_csv("customerProfiles.csv")
+                        customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'FREQUENCY'] = customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'FREQUENCY'].apply(lambda x: frequency)
+                        customer_df.to_csv('customerProfiles.csv', index=False)
+                        st.write("Threshold frequency of customer {} has been updated to {}".format(customer_id, frequency))
 
             else:
                 st.warning("Incorrect Username/Password")
