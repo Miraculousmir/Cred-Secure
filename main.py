@@ -222,33 +222,33 @@ def main():
             result = login_user(username, check_hashes(password, hashed_pswd))
             if result:
                 st.success("Logged In as {}".format(username))
-                task = st.selectbox("Task", ["Show Customer Profiles", "Show Terminal Profiles", "Show Transactions", "Make Prediction", "Blacklist Terminals"])
+                task = st.selectbox("Task", ["Show Customer Profiles", "Show Terminal Profiles", "Show Transactions", "Make Transaction and Predict", "Blacklist Terminals"])
 
                 if task == "Show Customer Profiles":
                     st.subheader("Customer Profiles")
                     data = pd.read_csv("customerProfiles.csv")
-                    customer_id = st.number_input("Customer ID", value=None, step=1)
+                    customer_id = st.number_input("Customer ID", value=None, step=1, min_value=0, max_value=4999)
                     st.dataframe(data[data.CUSTOMER_ID == customer_id])
 
                 elif task == "Show Terminal Profiles":
                     st.subheader("Terminal Profiles")
                     data = pd.read_csv("terminalProfiles.csv")
-                    terminal_id = st.number_input("Terminal ID", value=None, step=1)
+                    terminal_id = st.number_input("Terminal ID", value=None, step=1, min_value=0, max_value=9999)
                     st.dataframe(data[data.TERMINAL_ID == terminal_id])
 
                 elif task == "Show Transactions":
                     st.subheader("Transactions")
                     data = pd.read_csv("transactions.csv")
-                    customer_id = st.number_input("Customer ID", step=1)
+                    customer_id = st.number_input("Customer ID", step=1, min_value=0, max_value=4999)
                     df = data[data.CUSTOMER_ID == customer_id]
                     pr = df.profile_report()
                     st_profile_report(pr)
                     st.write("All Transactions")
                     st.dataframe(df)
 
-                elif task == "Make Prediction":
-                    st.subheader("Make Prediction")
-                    st.caption("Enter new transaction details for predicting if it is legitimate or fraudulent")
+                elif task == "Make Transaction and Predict":
+                    st.subheader("Make Transaction and Predict")
+                    st.caption("Enter new transaction details")
                     customer_transaction = generate_transaction(start_date="2018-04-01")
 
                     # create a button to submit input and get prediction
@@ -310,8 +310,8 @@ def main():
 
                 elif task == "Blacklist Terminals":
                     st.subheader("Blacklist Terminals")
-                    customer_id = st.number_input("Customer ID", value=None, step=1)
-                    terminal_id = st.number_input("Terminal ID", value=None, step=1)
+                    customer_id = st.number_input("Customer ID", value=None, step=1, min_value=0, max_value=4999)
+                    terminal_id = st.number_input("Terminal ID", value=None, step=1, min_value=0, max_value=9999)
                     submit = st.button("Submit")
 
                     if submit:
