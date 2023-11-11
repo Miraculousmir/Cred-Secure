@@ -266,10 +266,10 @@ def main():
                         dat = str(customer_transaction.at[0, 'TX_DATETIME'].date())
                         count = len(df[df['TX_DATETIME'].dt.date == pd.to_datetime(dat).date()])
                         if terminal_id in blacklist:
-                            st.warning("Terminal {} blacklisted, no transaction can be made")
+                            st.warning("Terminal {} blacklisted, no transaction can be made".format(terminal_id))
 
                         elif count == frequency:
-                            st.warning("Threshold frequency of {} has been reached for customer {} for {}, so no transaction can be made".format(frequency, customer_id, dat))
+                            st.warning("Threshold frequency of {} has been reached for customer {} for date {}, so, no transaction can be made".format(frequency, customer_id, dat))
 
                         else:
                             customer_transaction['TX_FRAUD_SCENARIO'] = 0
@@ -308,9 +308,9 @@ def main():
 
                             # display result
                             if prediction[0] == 0:
-                                st.success("Legitimate transaction")
+                                st.success("Legitimate Transaction")
                             else:
-                                st.warning("Fraudulent transaction")
+                                st.warning("Fraudulent Transaction")
 
                             customer_transaction['TX_FRAUD'] = int(prediction[0])
                             st.dataframe(customer_transaction)
