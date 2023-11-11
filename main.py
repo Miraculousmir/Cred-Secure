@@ -81,7 +81,7 @@ def generate_transaction(start_date="2018-04-01"):
     customer_id = st.number_input("Customer ID", value=None, step=1, min_value=0, max_value=4999)
     terminal_id = st.number_input("Terminal ID", value=None, step=1, min_value=0, max_value=9999)
     d = st.date_input("Date", min_value=datetime.date(2018, 10, 1))
-    t = st.time_input("Time", step=0:00:01)
+    t = st.time_input("Time", step=1)
     sd = datetime.date(2018, 4, 1)
     day = (d - sd).days
     time_tx = (t.hour * 60 + t.minute) * 60 + t.second
