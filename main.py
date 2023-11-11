@@ -313,10 +313,10 @@ def main():
                     customer_id = st.number_input("Customer ID", value=None, step=1)
                     terminal_id = st.number_input("Terminal ID", value=None, step=1)
                     submit = st.button("Submit")
-                    customer_df = pd.read_csv("customerProfiles.csv")
-                    blacklist_row = eval(customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'].iloc[0])
 
                     if submit:
+                        customer_df = pd.read_csv("customerProfiles.csv")
+                        blacklist_row = eval(customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'].iloc[0])
                         blacklist_row.extend([int(terminal_id)])
                         customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'] = customer_df.loc[customer_df['CUSTOMER_ID'] == customer_id, 'BLACKLIST'].apply(lambda x: blacklist_row)
                         customer_df.to_csv('customerProfiles.csv', index=False)
