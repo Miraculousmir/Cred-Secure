@@ -266,7 +266,7 @@ def main():
                         dat = str(customer_transaction.at[0, 'TX_DATETIME'].date())
                         count = len(df[df['TX_DATETIME'].dt.date == pd.to_datetime(dat).date()])
                         if terminal_id in blacklist:
-                            st.warning("Terminal {} blacklisted, no transaction can be made".format(terminal_id))
+                            st.warning("Terminal {} blacklisted for customer {}, so, no transaction can be made".format(terminal_id, customer_id))
 
                         elif count == frequency:
                             st.warning("Threshold frequency of {} has been reached for customer {} for date {}, so, no transaction can be made".format(frequency, customer_id, dat))
