@@ -18,7 +18,7 @@ import streamlit as st
 
 # Customer Transactions Profiling
 import ydata_profiling
-from streamlit_pandas_profiling import st_profile_report
+from streamlit_ydata_profiling import st_profile_report
 
 # Prediction
 from sklearn.model_selection import train_test_split
