@@ -16,10 +16,6 @@ import pandas as pd
 # Frontend Development
 import streamlit as st
 
-# Customer Transactions Profiling
-import ydata_profiling
-from streamlit_ydata_profiling import st_profile_report
-
 # Prediction
 from sklearn.model_selection import train_test_split
 import sklearn.linear_model
@@ -241,8 +237,6 @@ def main():
                     data = pd.read_csv("transactions.csv")
                     customer_id = st.number_input("Customer ID", step=1, min_value=0, max_value=4999)
                     df = data[data.CUSTOMER_ID == customer_id]
-                    pr = df.profile_report()
-                    st_profile_report(pr)
                     st.write("All Transactions")
                     st.dataframe(df)
 
